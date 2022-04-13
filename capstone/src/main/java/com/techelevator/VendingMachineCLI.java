@@ -11,6 +11,7 @@ public class VendingMachineCLI {
 	}
 
 	public void run() {
+		System.out.println("Welcome to the Port-A-Diner!");
 		while (true) {
 			myMenu.displayMenu();
 
