@@ -6,48 +6,23 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class Menu {
-
-	private PrintWriter out;
-	private Scanner in;
+	private PrintWriter output;
+	private Scanner input;
+	private String currentOutput = "Welcome to the Vendotron 9000. Please make your selection:\n" +
+			                       "\n" +
+			                       "1) Display Vending Machine Items\n" +
+			                       "2) Purchase\n" +
+			                       "3) Exit";
 
 	public Menu(InputStream input, OutputStream output) {
-		this.out = new PrintWriter(output);
-		this.in = new Scanner(input);
+		this.output = new PrintWriter(output);
+		this.input = new Scanner(input);
 	}
+	public void displayMenu(){
+		String currentChoice;
+		System.out.println(currentOutput);
+		currentChoice = input.nextLine();
+		System.out.printf("You've selected %s. Thank you for your time.%n", currentChoice);
 
-	public Object getChoiceFromOptions(Object[] options) {
-		Object choice = null;
-		while (choice == null) {
-			displayMenuOptions(options);
-			choice = getChoiceFromUserInput(options);
-		}
-		return choice;
-	}
-
-	private Object getChoiceFromUserInput(Object[] options) {
-		Object choice = null;
-		String userInput = in.nextLine();
-		try {
-			int selectedOption = Integer.valueOf(userInput);
-			if (selectedOption > 0 && selectedOption <= options.length) {
-				choice = options[selectedOption - 1];
-			}
-		} catch (NumberFormatException e) {
-			// eat the exception, an error message will be displayed below since choice will be null
-		}
-		if (choice == null) {
-			out.println(System.lineSeparator() + "*** " + userInput + " is not a valid option ***" + System.lineSeparator());
-		}
-		return choice;
-	}
-
-	private void displayMenuOptions(Object[] options) {
-		out.println();
-		for (int i = 0; i < options.length; i++) {
-			int optionNum = i + 1;
-			out.println(optionNum + ") " + options[i]);
-		}
-		out.print(System.lineSeparator() + "Please choose an option >>> ");
-		out.flush();
 	}
 }
