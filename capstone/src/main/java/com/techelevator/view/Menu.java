@@ -8,35 +8,43 @@ import java.util.*;
 public class Menu {
 	private PrintWriter output;
 	private Scanner input;
-	private String currentMenu;
 	private Map<String, ArrayList<String>> menu = new HashMap<>();
-	private List<String> currentOptions = new ArrayList<>();
+
+	private String currentMenu;
+	private List<String> currentOptions;
+
+	private Cart myCart;
 
 
 	private final String MAIN_MENU = "What would you like to do?\n";
 	private final String PURCHASE_MENU = "Make a purchase: \n";
 	private final String PRODUCT_MENU = "Please Select a product to purchase:\n";
 	private final String MONEY_MENU = "Please input cash:\n";
+	private final int ADMINISTRATIVE_OVERRIDE_PASSWORD = 789456123;
 
 
 	public Menu(InputStream input, OutputStream output) {
 		this.output = new PrintWriter(output);
 		this.input = new Scanner(input);
+
 		menuSetup();
-		currentOptions = menu.get(MAIN_MENU);
 		currentMenu = MAIN_MENU;
+		currentOptions = menu.get(MAIN_MENU);
+
+		myCart = new Cart();
 
 	}
 
 
 	public void displayMenu(){
-		String currentChoice;
 		System.out.println(currentMenu);
 		for(String string : currentOptions){
 			System.out.println(string);
 		}
-		currentChoice = input.nextLine();
-		makeChoice(currentChoice);
+		if(currentMenu != MAIN_MENU)
+			System.out.printf("Current available funds: %.2f%n", myCart.getCurrentFunds());
+
+		makeChoice(input.nextLine());
 
 	}
 	private void makeChoice(String userInput){
@@ -47,15 +55,35 @@ public class Menu {
 		}
 		currentChoice = userInput.split(" |[)]")[0];
 		if(menuOptions.contains(currentChoice)){
-			menuOptions(currentChoice);
+			menuChooser(currentChoice);
 		} else
-			System.out.println("Invalid choice");
+			System.out.println("Please choose one of the available options. Thank you.");
 
 
 	}
 
-	private void menuOptions(String userInput){
-		System.out.println(userInput);
+
+	private void displayInventory(){
+		System.out.println("Displaying inventory");
+	}
+
+
+
+	private void changeMenu(String inputMenu){
+		currentMenu = inputMenu;
+		currentOptions = menu.get(inputMenu);
+	}
+	private void menuSetup(){
+		menu.put(MAIN_MENU, new ArrayList<>(Arrays.asList("1) Display Vending Machine Items", "2) Purchase", "3) Exit")) );
+		menu.put(PURCHASE_MENU, new ArrayList<>(Arrays.asList("1) Feed Money", "2) Select Product", "3) Finish Transaction")) );
+		menu.put(PRODUCT_MENU, new ArrayList<>(Arrays.asList("1) First Item", "2) Second Item", "3) Third Item")) );
+		menu.put(MONEY_MENU, new ArrayList<>(Arrays.asList("1) $20.00", "2) $10.00", "3) $5.00", "4) $2.00", "5) $1.00", "6) $.25", "7) $.10", "8) $.05", "9) .01", "10) I'm done.")) );
+
+
+
+	}
+	private void menuChooser(String userInput){
+
 		switch (currentMenu){
 			case MAIN_MENU -> {
 				if(userInput.equals("1")){
@@ -65,7 +93,13 @@ public class Menu {
 					changeMenu(PURCHASE_MENU);
 
 				} else{
-					System.exit(0);
+					System.out.println("Only authorized personnel can turn off this vending machine. " +
+							"If believe that there has been an error, please contact an employee.");
+					if(Integer.parseInt(input.nextLine()) == ADMINISTRATIVE_OVERRIDE_PASSWORD){
+						System.exit(0);
+					}else{
+						System.out.println("Please contact an employee");
+					}
 				}
 
 			}
@@ -78,7 +112,15 @@ public class Menu {
 
 				}
 				else{
-					System.out.println("Transaction complete");
+					//actually finish the transaction
+					int[] change = myCart.makeChange();
+					System.out.printf("%d %s, %d %s, and %d %s fall out of the change return slot.%n",
+							change[0], change[0] == 1 ? "quarter" : "quarters",
+							change[1], change[1] == 1 ? "dime" : "dimes",
+							change[2], change[2] == 1 ? "nickel" : "nickels");
+
+					System.out.println("Thank you for shopping at the Port-A-Diner!\n\n\n\n");
+					System.out.println("Welcome to the Port-A-Diner!");
 					changeMenu(MAIN_MENU);
 				}
 
@@ -89,27 +131,32 @@ public class Menu {
 				changeMenu(PURCHASE_MENU);
 			}
 			case MONEY_MENU -> {
+				switch (userInput){
+					case "1" ->{
+						myCart.addFunds(20.00);
+					}case "2" ->{
+						myCart.addFunds(10.00);
+					}case "3" ->{
+						myCart.addFunds(5.00);
+					}case "4" ->{
+						myCart.addFunds(2.00);
+					}case "5" ->{
+						myCart.addFunds(1.00);
+					}case "6" ->{
+						myCart.addFunds(.25);
+					}case "7" ->{
+						myCart.addFunds(.10);
+					}case "8" ->{
+						myCart.addFunds(.05);
+					}case "9" ->{
+						System.out.println("The penny clinks through the machine and lands in the change return slot. Who puts a penny in a vending machine?");
+					}case "10" ->{
+						changeMenu(PURCHASE_MENU);
+					}
+				}
 
 
 			}
 		}
-	}
-
-	private void displayInventory(){
-		System.out.println("Displaying inventory");
-	}
-
-	public void changeMenu(String inputMenu){
-		currentMenu = inputMenu;
-		currentOptions = menu.get(inputMenu);
-	}
-	private void menuSetup(){
-		menu.put(MAIN_MENU, new ArrayList<>(Arrays.asList("1) Display Vending Machine Items", "2) Purchase", "3) Exit")) );
-		menu.put(PURCHASE_MENU, new ArrayList<>(Arrays.asList("1) Feed Money", "2) Select Product", "3) Finish Transaction")) );
-		menu.put(PRODUCT_MENU, new ArrayList<>(Arrays.asList("1) First Item", "2) Second Item", "3) Third Item")) );
-		menu.put(MONEY_MENU, new ArrayList<>(Arrays.asList("1) $20.00", "2) $10.00", "3) $5.00", "4) $2.00", "5) $1.00", "6) $.25", "7) $.10", "8) $.5")) );
-
-
-
 	}
 }
