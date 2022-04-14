@@ -23,26 +23,30 @@ public class Menu {
 	private final String PRODUCT_MENU = "Please Select a product to purchase:\n";
 	private final String MONEY_MENU = "Please input cash:\n";
 	private final int ADMINISTRATIVE_OVERRIDE_PASSWORD = 789456123;
-	private final String INVENTORY_PATH = "capstone/vendingmachine.csv";
+	private final String INVENTORY_PATH = "vendingmachine.csv";
 
 
 	public Menu(InputStream input, OutputStream output) {
 		this.output = new PrintWriter(output);
 		this.input = new Scanner(input);
 
+		myCart = new Cart();
+		myInventory = new Inventory(INVENTORY_PATH);
+
 		menuSetup();
 		currentMenu = MAIN_MENU;
 		currentOptions = menu.get(MAIN_MENU);
 
-		myCart = new Cart();
-		myInventory = new Inventory(INVENTORY_PATH);
+
 
 	}
 
-	public void printInventory(){
+	public String inventoryString(){
+		String inventoryString = "";
 		for(Purchasable item : myInventory.getInventoryList()){
-			System.out.printf("%s | %s | %.2f | %s Quantity: %d%n",item.getSlot(), item.getName(), item.getPrice(), item.getClass(), item.getQuantity());
+			inventoryString += String.format("%s | %s | %.2f | %s Quantity: %d%n",item.getSlot(), item.getName(), item.getPrice(), item.getClass(), item.getQuantity());
 		}
+		return inventoryString;
 	}
 
 
@@ -61,11 +65,11 @@ public class Menu {
 		List<String> menuOptions = new ArrayList<>();
 		String currentChoice;
 		for(String menuOption : menu.get(currentMenu)){
-			menuOptions.add(menuOption.split(" |[)]")[0]);
+			menuOptions.add(menuOption.split(" |[)]")[0].toLowerCase());
 		}
 		currentChoice = userInput.split(" |[)]")[0];
-		if(menuOptions.contains(currentChoice)){
-			menuChooser(currentChoice);
+		if(menuOptions.contains(currentChoice.toLowerCase())){
+			menuChooser(currentChoice.toLowerCase());
 		} else
 			System.out.println("Please choose one of the available options. Thank you.");
 
@@ -83,7 +87,8 @@ public class Menu {
 	private void menuSetup(){
 		menu.put(MAIN_MENU, new ArrayList<>(Arrays.asList("1) Display Vending Machine Items", "2) Purchase", "3) Exit")) );
 		menu.put(PURCHASE_MENU, new ArrayList<>(Arrays.asList("1) Feed Money", "2) Select Product", "3) Finish Transaction")) );
-		menu.put(PRODUCT_MENU, new ArrayList<>(Arrays.asList("1) First Item", "2) Second Item", "3) Third Item")) );
+		menu.put(PRODUCT_MENU, new ArrayList<>(Arrays.asList(inventoryString().split("\n"))));
+		menu.get(PRODUCT_MENU).add("Cancel");
 		menu.put(MONEY_MENU, new ArrayList<>(Arrays.asList("1) $20.00", "2) $10.00", "3) $5.00", "4) $2.00", "5) $1.00", "6) $.25", "7) $.10", "8) $.05", "9) .01", "10) I'm done.")) );
 
 
@@ -94,7 +99,7 @@ public class Menu {
 		switch (currentMenu){
 			case MAIN_MENU -> {
 				if(userInput.equals("1")){
-					printInventory();
+					System.out.println(inventoryString());
 
 				} else if(userInput.equals("2")){
 					changeMenu(PURCHASE_MENU);
@@ -135,8 +140,20 @@ public class Menu {
 
 			}
 			case PRODUCT_MENU -> {
-				System.out.println("This is the product menu");
-				changeMenu(PURCHASE_MENU);
+				boolean didVend = false;
+				for(Purchasable item : myInventory.getInventoryList()){
+
+					if(userInput.equalsIgnoreCase(item.getSlot())){
+						System.out.printf("Vending your %s!%n", item.getName());
+						didVend = true;
+						break;
+					}
+				}
+				if(userInput.equalsIgnoreCase("cancel") || didVend){
+					changeMenu(PURCHASE_MENU);
+				}
+				else System.out.println("Please choose a valid option.");
+
 			}
 			case MONEY_MENU -> {
 				switch (userInput){
