@@ -10,7 +10,7 @@ public class Drink implements Purchasable {
      private double price;
      private int quantity;
 
-     public Drink (String slot, String name, double price, String type, int quantity) {
+     public Drink (String slot, String name, double price, int quantity) {
           this.slot = slot;
           this.name = name;
           this.price = price;
