@@ -14,6 +14,8 @@ public class Menu {
 	private List<String> currentOptions;
 
 	private Cart myCart;
+	private Inventory myInventory;
+
 
 
 	private final String MAIN_MENU = "What would you like to do?\n";
@@ -21,6 +23,7 @@ public class Menu {
 	private final String PRODUCT_MENU = "Please Select a product to purchase:\n";
 	private final String MONEY_MENU = "Please input cash:\n";
 	private final int ADMINISTRATIVE_OVERRIDE_PASSWORD = 789456123;
+	private final String INVENTORY_PATH = "capstone/vendingmachine.csv";
 
 
 	public Menu(InputStream input, OutputStream output) {
@@ -32,7 +35,14 @@ public class Menu {
 		currentOptions = menu.get(MAIN_MENU);
 
 		myCart = new Cart();
+		myInventory = new Inventory(INVENTORY_PATH);
 
+	}
+
+	public void printInventory(){
+		for(Purchasable item : myInventory.getInventoryList()){
+			System.out.printf("%s | %s | %.2f | %s Quantity: %d%n",item.getSlot(), item.getName(), item.getPrice(), item.getClass(), item.getQuantity());
+		}
 	}
 
 
@@ -59,13 +69,10 @@ public class Menu {
 		} else
 			System.out.println("Please choose one of the available options. Thank you.");
 
-
 	}
 
 
-	private void displayInventory(){
-		System.out.println("Displaying inventory");
-	}
+
 
 
 
@@ -87,7 +94,7 @@ public class Menu {
 		switch (currentMenu){
 			case MAIN_MENU -> {
 				if(userInput.equals("1")){
-					displayInventory();
+					printInventory();
 
 				} else if(userInput.equals("2")){
 					changeMenu(PURCHASE_MENU);
@@ -104,6 +111,7 @@ public class Menu {
 
 			}
 			case PURCHASE_MENU -> {
+
 				if(userInput.equals("1")){
 					changeMenu(MONEY_MENU);
 
