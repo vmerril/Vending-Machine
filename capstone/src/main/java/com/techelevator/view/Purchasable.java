@@ -1,7 +1,7 @@
 package com.techelevator.view;
 
 public interface Purchasable {
-    public int minusPurchase();
+    public void removeItem();
 
     public String getSlot();
 
@@ -10,6 +10,8 @@ public interface Purchasable {
     public double getPrice();
 
     public int getQuantity();
+
+    public String getType();
 
 
 }

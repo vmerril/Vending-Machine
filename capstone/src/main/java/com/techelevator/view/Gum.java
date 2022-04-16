@@ -6,16 +6,25 @@ public class Gum implements Purchasable{
         private String name;
         private double price;
         private int quantity;
-
+        private String type;
         public Gum (String slot, String name, double price, int quantity) {
             this.slot = slot;
             this.name = name;
             this.price = price;
             this.quantity = quantity;
+            this.type = "Gum";
         }
-        public int minusPurchase(){
-            quantity = quantity -1;
-            return quantity;
+
+
+        public String getType() {
+            return type;
+        }
+
+
+
+        public void removeItem(){
+        this.quantity -= 1;
+
         }
 
         public String getSlot() {

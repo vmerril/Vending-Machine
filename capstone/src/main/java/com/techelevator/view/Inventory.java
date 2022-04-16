@@ -47,7 +47,21 @@ public class Inventory {
 
     }
 
-    public List<Purchasable> getInventoryList() {
+    public List<Purchasable> getItemList() {
         return itemList;
+    }
+    public boolean removeFromInventory(String inputSlot){
+        for(Purchasable item : itemList){
+            if(item.getSlot().equalsIgnoreCase(inputSlot)){
+                if(item.getQuantity() > 0){
+                    item.removeItem();
+                    return true;
+                }
+                else
+                    return false;
+
+            }
+        }
+        return false;
     }
 }

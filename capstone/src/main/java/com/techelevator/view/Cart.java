@@ -28,7 +28,9 @@ public class Cart {
         numNickels = (int)(currentFunds/.05);
         currentFunds = Double.parseDouble(rounder.format(currentFunds % .05));
 
-
+        if(currentFunds<.05){
+            currentFunds = 0;
+        }
         return new int[]{numQuarters, numDimes,numNickels};
     }
 
@@ -39,7 +41,19 @@ public class Cart {
         return currentFunds;
     }
 
-    public void addToCart(Purchasable item) {  }
+    public void vend(Purchasable item) {
+        this.currentFunds -= item.getPrice();
+        System.out.printf("Vending %s. Thank you for your purchase.%n", item.getName());
+        switch (item.getType()){
+            case ("Chip") -> System.out.println("Crunch Crunch, Yum!");
+            case ("Candy") -> System.out.println("Munch Munch, Yum!");
+            case ("Drink") -> System.out.println("Glug Glug, Yum!");
+            case ("Gum") -> System.out.println("Chew Chew, Yum!");
+        }
+    }
+    public void resetFunds(){
+        currentFunds = 0;
+    }
     public List<Purchasable> getMyCart() {
         return myCart;
     }
