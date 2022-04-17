@@ -112,8 +112,9 @@ public class MenuTest{
             myMenu.setCurrentMenu(myMenu.getPRODUCT_MENU());
             myMenu.setCurrentOptions(myMenu.getMenu().get(myMenu.getPRODUCT_MENU()));
 
-
+            Assert.AssertEquals("A1 should have quantity 5", 5, myMenu.getMyInventory.get(0).getQuantity());
             myMenu.menuChooser("A1");
+            Assert.AssertEquals("A1 should have quantity 4", 4, myMenu.getMyInventory.get(0).getQuantity());
 
 
         } catch (InterruptedException e){
