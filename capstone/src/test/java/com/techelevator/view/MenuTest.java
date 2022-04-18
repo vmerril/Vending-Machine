@@ -113,7 +113,14 @@ public class MenuTest{
             myMenu.setCurrentOptions(myMenu.getMenu().get(myMenu.getPRODUCT_MENU()));
 
 
+
+            myMenu.getMyCart().addFunds(5.00);
+
+
+            Assert.assertEquals("A1 quantity should equal 5.", 5, myMenu.getMyInventory().getItemList().get(0).getQuantity());
             myMenu.menuChooser("A1");
+            Assert.assertEquals("A1 quantity should equal 5.", 4, myMenu.getMyInventory().getItemList().get(0).getQuantity());
+            myMenu.getMyCart().resetFunds();
 
 
         } catch (InterruptedException e){
@@ -122,10 +129,14 @@ public class MenuTest{
     }
     @Test
     public void menuChooserMoneyMenu() {
-        //myMenu.setCurrentMenu(myMenu.getMONEY_MENU());
-    }
-    @Test
-    public void changeMenu() {
+        try {
+            myMenu.setCurrentMenu(myMenu.getMONEY_MENU());
+            myMenu.setCurrentOptions(myMenu.getMenu().get(myMenu.getMAIN_MENU()));
+            myMenu.menuChooser("1");
+            Assert.assertEquals("Money should equal 20.", 20.00, myMenu.getMyCart().getCurrentFunds(), .0001);
+        } catch (InterruptedException e){
+            System.err.println("This is an interrupted exception error.");
+        }
     }
 
 
