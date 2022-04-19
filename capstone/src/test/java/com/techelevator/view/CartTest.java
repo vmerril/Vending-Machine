@@ -28,12 +28,13 @@ public class CartTest{
 
     @Test
     public void vend() {
+        myCart.addFunds(1.25);
         Candy candy = new Candy("Slot", "Name", 1.25, 2);
+        myCart.vend(candy);
+        Assert.assertEquals("Current funds should equal zero", 0, myCart.getCurrentFunds(),.001);
     }
 
 
 
-    @Test
-    public void getMyCart() {
-    }
+
 }
